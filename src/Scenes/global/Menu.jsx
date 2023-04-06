@@ -23,7 +23,7 @@ import { tokens } from "../../theme";
 import MenuOpenOutlinedIcon from "@mui/icons-material/MenuOpenOutlined";
 import { useSpring, animated } from "@react-spring/web";
 import { config } from "react-spring";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, matchRoutes } from "react-router-dom";
 
 const Item = ({
   style,
@@ -36,21 +36,27 @@ const Item = ({
   isCollapsed,
 }) => {
   const theme = useTheme();
+  const AnimatedListText = animated(ListItemText);
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleOnClick = () => {
     setSelected(title);
     navigate(to);
   };
+  const isCurrentPath = () => {
+    return location.pathname === to;
+  };
+  console.log(selected, title, to, isCurrentPath());
 
   const translateX = useSpring({
     delay: 170,
     opacity: !isCollapsed ? 1 : 0,
   });
-  const AnimatedListText = animated(ListItemText);
+
   return (
     <animated.div
-      active={selected === title}
       style={{
         ...width,
         color: colors.grey[100],
@@ -61,32 +67,28 @@ const Item = ({
       }}
     >
       <MenuItem
-        selected={selected === title}
         disableGutters
         divider={true}
         key={title}
         sx={{
           p: 2,
-
-          color:
-            selected === title ? colors.greenAccent[200] : colors.grey[100],
+          color: isCurrentPath() ? colors.greenAccent[200] : colors.grey[100],
           // &	.Mui-focusVisible{}
 
           borderLeft: ` ${selected === title ? "3px" : "3px"}  solid ${
-            selected === title ? colors.greenAccent[500] : "transparent"
+            isCurrentPath() ? colors.greenAccent[500] : "transparent"
           }`,
 
           "&:hover": {
             borderLeft: ` ${selected === title ? "3px" : "3px"}  solid ${
-              selected === title ? colors.greenAccent[500] : colors.grey[100]
+              isCurrentPath() ? colors.greenAccent[500] : colors.grey[100]
             }`,
           },
         }}
       >
         <ListItemIcon
           sx={{
-            color:
-              selected === title ? colors.greenAccent[500] : colors.grey[100],
+            color: isCurrentPath() ? colors.greenAccent[500] : colors.grey[100],
           }}
         >
           {icon}
@@ -154,7 +156,7 @@ export default function Menu() {
               ...width,
             }}
             title="New Customer"
-            to="/context"
+            to="/customerselection"
             icon={<PeopleOutlined />}
             selected={selected}
             setSelected={setSelected}
@@ -171,7 +173,7 @@ export default function Menu() {
           />
           <Item
             title="New Deal Structure"
-            to="/team"
+            to="/newdealstructure"
             icon={<HomeOutlined />}
             selected={selected}
             setSelected={setSelected}
